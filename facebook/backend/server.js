@@ -1,13 +1,14 @@
 const express = require("express");
 const cors = require("cors");
+const dotenv = require("dotenv");
+const { readdirSync } = require("fs");
+const { parentPort } = require("worker_threads");
 const app = express();
+dotenv.config();
 app.use(cors());
-app.get("/", (req, res) => {
-  res.send(`Welcome to Home`);
-});
-app.get("/bookmark", (req, res) => {
-  res.send(`Welcome to Bookmark`);
-});
-app.listen(8000, () => {
-  console.log(`server listening on port 8000`);
+
+readdirSync("./routes").map((r) => app.use("/", require("./routes/" + r)));
+const PORT = process.env.PORT || 8000;
+app.listen(PORT, () => {
+  console.log(`server listening on port ${PORT}`);
 });
